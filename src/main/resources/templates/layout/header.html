@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="headerLayout">
+  <header class="p-3 bg-dark text-white">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li><a id="home" href="/" class="nav-link px-2 text-secondary">Team4 Project</a></li>
+        </ul>
+
+        <div class="text-end">
+          <!-- 로그인 상태에 따라 로그인/로그아웃 버튼을 표시 -->
+          <span id="username" class="text-white me-2" th:if="${user != null}" th:text="${user}">username</span>
+          <!-- 로그인 버튼 -->
+          <a href="/host/signup" role="button" id="login" class="btn btn-outline-light me-2" th:if="${user == null}">Login</a>
+          <!-- 로그아웃 버튼 -->
+          <a href="/logout" role="button" id="logout" class="btn btn-outline-light me-2" th:if="${user != null}">Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+</th:block>
+
+</body>
+</html>

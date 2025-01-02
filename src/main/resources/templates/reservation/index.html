@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Posts Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+	
+  <div th:replace="~{layout/header :: header}">Header</div>
+  
+<!--  <th:block th:replace="layout/header :: headerLayout">Header</th:block>
+-->
+  <main class="container">
+	<div class="row">
+      <div class="card card-margin search-form my-3">
+        <div class="card-body p-0">
+          <form id="search-form" th:action="@{/posts}">
+            <div class="row">
+              <div class="col-12">
+                <div class="row no-gutters">
+                  <div class="col-lg-3 col-md-3 col-sm-12 p-0">
+                    <label for="search-type" hidden>Search Type</label>
+                    <select class="form-control" id="search-type" name="searchType">
+					  <option selected>Search Type</option>
+                      <option value="title">Title</option>
+                      <option value="content">Content</option>
+                      <option value="uid">ID</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-8 col-md-6 col-sm-12 p-0">
+                    <label for="search-value" hidden>Search</label>
+                    <input type="text" placeholder="Search Keyword..." class="form-control" id="search-value" name="searchValue">
+                  </div>
+                  <div class="col-lg-1 col-md-3 col-sm-12 p-0">
+                    <button type="submit" class="btn btn-base">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <table class="table" id="post-table">
+        <thead>
+        <tr>
+          <th class="title col-6"><a>Title</a></th>
+          <th class="category col-2"><a>Category</a></th>
+          <th class="uid"><a>Creator</a></th>
+          <th class="created-date"><a>Created Date</a></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post: ${posts}">
+          <td class="title"><a th:text="${post?.title}" th:href="@{/posts/{pid}(pid=${post?.id})}">Title</a></td>
+          <td class="category"><span class="badge text-bg-secondary mx-1"><a th:text="${post?.categoryType}" class="text-reset">Category</a></span></td>
+          <td class="uid" th:text="${post?.createdBy}">Admin</td>
+          <td class="created-date"><time th:text="${#temporals.format(post?.createdDate,'yyyy-MM-dd')}">2024-11-25</time></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row" sec:authorize="isAuthenticated()">
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <a th:href="@{posts/form}" class="btn btn-primary me-md-2" role="button" id="write-post">Write</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <nav id="pagination" aria-label="Page navigation">
+        <ul class="pagination justify-content-center my-3">
+          <li class="page-item" >
+			  <a class="page-link"
+
+			     th:href="@{/posts(page=${posts.number - 1}, searchType=${param.searchType}, searchValue=${param.searchValue})}"
+	
+		       th:classappend="${posts.hasPrevious() ? '' : 'disabled'}">
+
+			    <!-- 
+					th:href="@{|/posts?page=${posts.number - 1}|}"
+					th:classappend="${posts.number} == 0 ? 'disabled' : ''">
+					
+					-->
+
+			  	   Previous
+			  </a>
+		  </li>
+          <li class="page-item" 
+          	  th:each="pagingNumber : ${pagingNumbers}"
+          	  th:classappend="${pagingNumber} == ${posts.number} ? 'active' : ''">
+			  <a class="page-link" 
+			     
+			     th:href="@{/posts(page=${pagingNumber}, searchType=${param.searchType}, searchValue=${param.searchValue})}"
+			     th:text="${pagingNumber + 1}">
+				  1
+			  </a>
+		  </li>
+          <li class="page-item">
+			  <a class="page-link" href="#"
+			     th:href="@{/posts(page=${posts.number + 1}, searchType=${param.searchType}, searchValue=${param.searchValue})}"
+			     th:classappend="${posts.hasNext() ? '' : 'disabled'}">
+
+			    <!-- th:classappend="${posts.number} == 0 ? 'disabled' : ''">-->
+
+			  
+				  Next
+			  </a>
+		  </li>
+        </ul>
+      </nav>
+    </div>
+  </main>
+
+  <div th:replace="~{layout/footer :: footer}">Footer</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

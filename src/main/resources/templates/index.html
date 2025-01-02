@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Index page</title>
+</head>
+<body>
+	<h1>유저목록조회 도커에서 연결한 DB 를 로컬 localhost:3333 데이터 들고오는지 확인</h1>
+	<h2> 로그인 한 유저 : <span th:text="${username}"></span></h2>
+	<table>
+		<thead>
+			<tr>
+				<th>UID</th>
+			    <th>Email</th>
+			   <!--  <th>Role</th -->
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="user : ${users}">
+				<td th:text="${user.uid}"></td>
+				 <td th:text="${user.email}"></td>
+            <!-- <td th:text="${user.userRoleType}"></td> -->
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
