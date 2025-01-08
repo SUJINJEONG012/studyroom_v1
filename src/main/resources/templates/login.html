@@ -29,48 +29,76 @@
     </div>
     
  <script>
-document.getElementById("loginForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    
-    const loginData = {
-        uid: document.getElementById("uid").value,
-        password: document.getElementById("password").value
-    };
+ document.getElementById("loginForm").addEventListener("submit", function(event) {
+	    event.preventDefault();
+	    
+	    const loginData = {
+	        uid: document.getElementById("uid").value,
+	        password: document.getElementById("password").value
+	    };
 
-    fetch("/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(loginData)
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error("Login failed");
-        }
-    })
-    .then(data => {
-        if (data.message === "User logged in successfully!") {
-            // 성공 메시지 출력
-            document.getElementById("successMessage").style.display = "block";
-            document.getElementById("message").innerText = data.message;
+	    fetch("/login", {
+	        method: "POST",
+	        headers: {
+	            "Content-Type": "application/json"
+	        },
+	        body: JSON.stringify(loginData)
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            return response.json();
+	        } else {
+	            throw new Error("로그인 실패");
+	        }
+	    })
+	    .then(data => {
+	        if (data.message === "로그인성공 !") {
+	        	// 성공 시 받은 JWT 토큰을 localStorage에 저장
+                const token = data.token; // 여기서 서버가 반환한 JWT 토큰을 받는다고 가정합니다.
+                localStorage.setItem('jwtToken', token); // 토큰을 localStorage에 저장
 
-            // 로그인 후 리다이렉트
-            setTimeout(function() {
-                window.location.href = "/"; // 예: /home 페이지로 리다이렉트
-            }, 2000); // 2초 후 리다이렉트
-        } else {
-            // 실패 메시지 출력
-            document.getElementById("errorMessage").style.display = "block";
-        }
-    })
-    .catch(error => {
-        document.getElementById("errorMessage").style.display = "block";
-        console.error("Login error:", error);
-    });
-});
+                
+	            // 성공 메시지 출력
+	            document.getElementById("successMessage").style.display = "block";
+	            document.getElementById("message").innerText = data.message;
+
+	            // 로그인 후 리다이렉트
+	            setTimeout(function() {
+	                window.location.href = "/"; // 예: /home 페이지로 리다이렉트
+	            }, 2000); // 2초 후 리다이렉트
+	        } else {
+	            // 실패 메시지 출력
+	            document.getElementById("errorMessage").style.display = "block";
+	        }
+	    })
+	    .catch(error => {
+	        document.getElementById("errorMessage").style.display = "block";
+	        console.error("Login error:", error);
+	    });
+	});
+ 
+//인증된 요청 보내는 예시 함수
+ function sendAuthenticatedRequest() {
+     const token = localStorage.getItem('jwtToken');
+     if (token) {
+         fetch("/some-secure-endpoint", {
+             method: "GET",
+             headers: {
+                 "Authorization": `Bearer ${token}`  // JWT 토큰을 Authorization 헤더에 포함
+             }
+         })
+         .then(response => response.json())
+         .then(data => {
+             console.log("Secure data:", data);
+         })
+         .catch(error => {
+             console.error("Request failed:", error);
+         });
+     } else {
+         console.error("No JWT token found.");
+     }
+ }
+
 </script>
 
 </body>

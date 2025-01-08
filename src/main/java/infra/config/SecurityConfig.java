@@ -54,26 +54,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
     	.formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable);
-//        .authorizeHttpRequests(authorize -> authorize
-//                .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN")
-//                .requestMatchers("/api/v1/manager/**").hasAnyRole("MANAGER", "ADMIN")
-//                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-//                .anyRequest().permitAll()
-//        );
-		
-//.csrf(csrf -> csrf.disable())
-//				.authorizeHttpRequests(
-//						auth -> auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 정적리소스
-//																														// 혀용
-//								.requestMatchers("/login", "/signup", "/assets/**").permitAll() // 로그인, 가입, 정적 자원 허용
-//								.requestMatchers("/admin/**").hasRole("ADMIN")
-//								// .requestMatchers("/**").permitAll()
-//								.anyRequest().authenticated() // 모든 요청 인증 필요
-//				)
-//				// .formLogin(withDefaults()) // 기본로그인 사용
-//				.formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/", true)
-//						.failureUrl("/login?error=true").permitAll() // 로그인 페이지는 누구나 접근 가능
-//				).logout(logout -> logout.logoutSuccessUrl("/")); // 로그아웃 성공 시 이동 경로
+    	
 
 		return http.build();
 	}

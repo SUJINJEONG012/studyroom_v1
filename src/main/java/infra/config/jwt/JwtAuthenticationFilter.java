@@ -16,13 +16,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import infra.config.auth.PrincipalDetails;
 import infra.dto.UserDto;
+import infra.entity.constant.UserRoleType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-
+// 로그인처리 담당하는 필터
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	
@@ -48,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	         }
 	     } catch (IOException e) {
 	         e.printStackTrace();
-	         throw new IllegalArgumentException("Unable to read the request body.");
+	         throw new IllegalArgumentException("응답내용을 읽을 수 없다!! .");
 	     }
 
 	     String requestBody = sb.toString();
@@ -79,7 +80,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 	            FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
+		 // 인증된 사용자 정보 가져오기
 	        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+	        
+	        
 	        String jwtToken = JWT.create()
 	                .withSubject(principalDetails.getUsername())
 	                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))

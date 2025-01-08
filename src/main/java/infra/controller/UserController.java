@@ -1,9 +1,9 @@
 package infra.controller;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import infra.dto.UserDto;
 import infra.dto.request.UserRequest;
-import infra.entity.User;
 import infra.entity.constant.UserRoleType;
 import infra.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -64,21 +63,17 @@ public class UserController {
 	    return "login"; // 로그인 페이지로 이동
 	}
 	
-	
-	
-	 @PostMapping("/login")
-	    public ResponseEntity<String> login(@RequestBody UserDto userDto) {
-	        // UserService에서 인증 로직 호출
-	        String responseMessage = userService.authenticateUser(userDto);
-	        
-	        // 성공 메시지
-	        if (responseMessage.equals("User logged in successfully!")) {
-	            return ResponseEntity.ok(responseMessage);
-	        }
-	        
-	        // 인증 실패 메시지
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseMessage);
-	    }
+	@PostMapping("/login")
+    public String loginUser(@ModelAttribute UserRequest userRequest, Model model) {
+        try {
+            UserDto userDto = userRequest.toDto(UserRoleType.GUEST);
+            userService.registerUser(userDto);
+            return "redirect:/";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "로그인 오류: " + e.getMessage());
+            return "login";
+        }
+    }
 	
 
 	@GetMapping("/signup")

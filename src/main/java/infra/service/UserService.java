@@ -1,12 +1,16 @@
 package infra.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import infra.dto.UserDto;
 import infra.entity.User;
@@ -54,25 +58,7 @@ public class UserService {
 	}
 	
 	
-	public String authenticateUser(UserDto userDto) {
-	    // UID로 사용자를 찾음
-		 User user = userRepository.findByUid(userDto.getUid())
-		            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-	    
-	    if (user == null) {
-	        return "User not found";
-	    }
-
-	    // 비밀번호 검증
-	    if (!passwordEncoder.matches(userDto.getPassword(), user.getPassword())) {
-	        return "Invalid credentials";
-	    }
-
-	    // JWT 토큰 생성 등 추가 작업
-	    return "User logged in successfully!";
-	}
-		
+	
 	
 	// 모든유저조회 
 	public List<UserDto> getAllUsers(){
