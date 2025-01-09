@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final UserRepository userRepository;
+	private final UserDetailsService userDetailsService;
 	private final CorsConfig corsConfig;
 
 	@Bean
@@ -48,7 +48,7 @@ public class SecurityConfig {
     	.addFilter(new JwtAuthenticationFilter(authenticationManager))
     	
     	// 요청 시 JWT 토큰을 검증하는 필터 추가 (JwtAuthorizationFilter)
-    	.addFilter(new JwtAuthorizationFilter(authenticationManager, userRepository))
+    	.addFilter(new JwtAuthorizationFilter(authenticationManager, userDetailsService))
     	.csrf(AbstractHttpConfigurer::disable)
     	.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -24,11 +25,11 @@ import lombok.RequiredArgsConstructor;
 //인증, 인가 실행될때 자동으로 호출되는 필터
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-	private final UserRepository userRepository;
+	private final  UserDetailsService userDetailsService;
 	
-	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
+	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
 		super(authenticationManager);
-		this.userRepository = userRepository;
+		this.userDetailsService = userDetailsService;
 	}
 
 	
@@ -53,11 +54,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		
 		if (username != null) {
 			// Optional에서 User 객체를 꺼내기
-						User user = userRepository.findByUid(username)
+						User user =  userDetailsService.findByUid(username)
 			                                      .orElseThrow(() -> new RuntimeException("User not found"));
 
 			// 인가
-			PrincipalDetails principalDetails = new PrincipalDetails(user);
+			PrincipalDetails principalDetails = new PrincipalDetails(User);
 			Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, 
 																					null, 
 																					principalDetails.getAuthorities());

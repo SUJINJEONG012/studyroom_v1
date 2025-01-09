@@ -64,17 +64,26 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-    public String loginUser(@ModelAttribute UserRequest userRequest, Model model) {
-        try {
-            UserDto userDto = userRequest.toDto(UserRoleType.GUEST);
-            userService.registerUser(userDto);
-            return "redirect:/";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "로그인 오류: " + e.getMessage());
-            return "login";
-        }
-    }
-	
+	public String loginUser(@ModelAttribute UserRequest userRequest, Model model) {
+	    try {
+	        // 유저 요청을 DTO로 변환
+	        UserDto userDto = userRequest.toDto(UserRoleType.GUEST);
+	        
+	        // 서비스에서 사용자 인증을 처리하고 JWT 토큰을 발급받음
+	        String token = userService.authenticateUser(userDto);  // 토큰 발급 메서드
+	        
+	        // 인증 성공 후 JWT 토큰을 클라이언트에 저장하거나 세션에 저장
+	        // 예: HTTP 세션, 쿠키, 로`컬 스토리지 등에 토큰 저장
+	        model.addAttribute("jwtToken", token);
+	        
+	        // 로그인 후 메인 페이지로 리다이렉트
+	        return "redirect:/";
+	    } catch (Exception e) {
+	        model.addAttribute("errorMessage", "로그인 오류: " + e.getMessage());
+	        return "login";  // 로그인 페이지로 돌아감
+	    }
+	}
+
 
 	@GetMapping("/signup")
 	public String guestSignupPage() {

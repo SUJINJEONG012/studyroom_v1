@@ -1,17 +1,16 @@
 package infra.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import infra.config.jwt.JwtTokenProvider;
 import infra.dto.UserDto;
 import infra.entity.User;
 import infra.entity.constant.UserRoleType;
@@ -25,6 +24,26 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
+	 private final AuthenticationManager authenticationManager;
+	    private final JwtTokenProvider jwtTokenProvider;
+	
+	public String authenticateUser(UserDto userDto) {
+        try {
+            // 사용자 인증 (예: UsernamePasswordAuthenticationToken 사용)
+            UsernamePasswordAuthenticationToken authenticationToken = 
+                    new UsernamePasswordAuthenticationToken(userDto.getUid(), userDto.getPassword());
+            
+            // 인증 매니저로 인증을 시도
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            
+            // 인증 성공 시 JWT 토큰 발급
+            String token = jwtTokenProvider.generateToken(authentication);
+            return token;
+        } catch (Exception e) {
+            throw new RuntimeException("Authentication failed: " + e.getMessage());
+        }
+    }
+	
 	
 	public void registerUser(UserDto userDto) {
 		
@@ -56,7 +75,9 @@ public class UserService {
 		return userRepository.findById(id)
 				.map(UserDto::fromEntity);
 	}
-	
+	public Optional<User> findByUid(String uid) {
+	    return userRepository.findByUid(uid);
+	}
 	
 	
 	
