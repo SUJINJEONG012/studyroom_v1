@@ -31,29 +31,53 @@ public class UserController {
 
 	private final UserService userService;
 	
+//	@GetMapping("/")
+//	public String mainPage(Model model) {
+//		
+//		 // 현재 로그인한 사용자 정보 가져오기
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        // principal이 UserDetails 객체인 경우에 사용자 정보 가져오기
+//        if (principal instanceof UserDetails) {
+//            UserDetails userDetails = (UserDetails) principal;
+//            String username = userDetails.getUsername(); // 사용자 이름
+//            System.out.println("현재 로그인한 사용자 이름: " + username);
+//            model.addAttribute("username", username);
+//        } else {
+//            // 인증되지 않은 경우
+//            System.out.println("로그인된 사용자가 없습니다.");
+//        }
+//        
+//        
+//		// 모든 유저 정보를 가져옴 
+//		List<UserDto> users = userService.getAllUsers();
+//		System.out.println("users : "+ users); // DTO 리스트 확인
+//		model.addAttribute("users", users);
+//		return "index";
+//	}
+	
 	@GetMapping("/")
 	public String mainPage(Model model) {
-		
-		 // 현재 로그인한 사용자 정보 가져오기
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    // 현재 로그인한 사용자 정보 가져오기
+	    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        // principal이 UserDetails 객체인 경우에 사용자 정보 가져오기
-        if (principal instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) principal;
-            String username = userDetails.getUsername(); // 사용자 이름
-            System.out.println("현재 로그인한 사용자 이름: " + username);
-            model.addAttribute("username", username);
-        } else {
-            // 인증되지 않은 경우
-            System.out.println("로그인된 사용자가 없습니다.");
-        }
-        
-        
-		// 모든 유저 정보를 가져옴 
-		List<UserDto> users = userService.getAllUsers();
-		System.out.println("users : "+ users); // DTO 리스트 확인
-		model.addAttribute("users", users);
-		return "index";
+	    if (principal instanceof UserDetails) {
+	        UserDetails userDetails = (UserDetails) principal;
+	        String username = userDetails.getUsername();
+	        System.out.println("현재 로그인한 사용자 이름: " + username);
+	        model.addAttribute("username", username);
+	    } else {
+	        // 인증되지 않은 경우
+	        System.out.println("로그인된 사용자가 없습니다.");
+	        model.addAttribute("username", "Guest"); // 기본 메시지 설정
+	    }
+
+	    // 모든 유저 정보를 가져옴
+	    List<UserDto> users = userService.getAllUsers();
+	    System.out.println("users : " + users); // DTO 리스트 확인
+	    model.addAttribute("users", users);
+
+	    return "index"; // index.html로 이동
 	}
 	
 	

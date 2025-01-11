@@ -94,9 +94,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	     // 응답 헤더에 JWT 토큰 추가
 	     response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
 	     
-	     // 로그인 성공 메시지와 함께 응답
+	     // 응답 JSON 설정
+	     response.setContentType("application/json;charset=UTF-8");
+	     response.setCharacterEncoding("UTF-8");
+	     
+	     // 로그인 성공 메시지와 함께 응답, 응답 메시지 작성
 	     Map<String, String> responseMessage = new HashMap<>();
 	     responseMessage.put("message", "로그인 성공");
+	     responseMessage.put("token", jwtToken);
+	     responseMessage.put("redirect", "/"); // 리다이렉트 경로
+	     
+	     
 	     response.getWriter().write(new ObjectMapper().writeValueAsString(responseMessage));
 	 }
 

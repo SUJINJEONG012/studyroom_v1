@@ -45,38 +45,18 @@
 	        },
 	        body: JSON.stringify(loginData)
 	    })
-	    .then(response => {
-	        if (response.ok) {
-	            return response.json(); // 응답을 JSON으로 처리
-	        } else {
-	            // 서버가 401을 반환할 경우
-	            return response.json().then(data => {
-	                throw new Error(data.message || "로그인 실패");
-	            });
-	        }
-	    })
-	    .then(data => {
-	        if (data.message === "로그인성공 !") {
-	            // 성공 시 받은 JWT 토큰을 localStorage에 저장
-	            const token = data.token; // 서버가 반환한 JWT 토큰
-	            localStorage.setItem('jwtToken', token);
-
-	            // 성공 메시지 출력
-	            document.getElementById("successMessage").style.display = "block";
-	            document.getElementById("message").innerText = data.message;
-
-	            // 로그인 후 리다이렉트
-	            setTimeout(function() {
-	                window.location.href = "/"; // 예: /home 페이지로 리다이렉트
-	            }, 2000); // 2초 후 리다이렉트
-	        }
-	    })
-	    .catch(error => {
-	        // 실패 메시지 출력
-	        document.getElementById("errorMessage").style.display = "block";
-	        console.error("Login error:", error.message); // 오류 메시지 출력
-	        document.getElementById("errorMessage").innerText = `ssError: ${error.message}`; // 오류 메시지 UI에 반영
-	    });
+	    .then((response) => response.json())
+    .then((data) => {
+        if (data.token) {
+            alert(data.message); // "로그인 성공" 메시지 표시
+            window.localStorage.setItem("token", data.token); // JWT 토큰 저장 (필요시)
+            window.location.href = data.redirect; // "/"로 리다이렉트
+        } else {
+            alert("로그인 실패!");
+        }
+    })
+    .catch((error) => console.error("Error:", error));
+	 
 	});
 
  

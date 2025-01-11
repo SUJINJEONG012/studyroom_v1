@@ -8,21 +8,35 @@
 <body>
 	<h1>유저목록조회 도커에서 연결한 DB 를 로컬 localhost:3333 데이터 들고오는지 확인</h1>
 	<h2> 로그인 한 유저 : <span th:text="${username}"></span></h2>
-	<table>
+	<!-- <table>
 		<thead>
 			<tr>
 				<th>UID</th>
 			    <th>Email</th>
-			   <!--  <th>Role</th -->
+			    <th>Role</th
 			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="user : ${users}">
 				<td th:text="${user.uid}"></td>
 				 <td th:text="${user.email}"></td>
-            <!-- <td th:text="${user.userRoleType}"></td> -->
+            <td th:text="${user.userRoleType}"></td>
 			</tr>
 		</tbody>
-	</table>
+	</table> -->
+	 <!-- 로그인된 사용자 이름 표시 -->
+    <p th:if="${username != null}">
+        Hello, <span th:text="${username}"></span>! Welcome back.
+    </p>
+    <p th:if="${username == null}">
+        Hello, Guest! Please <a href="/login">login</a>.
+    </p>
+    
+    <!-- 모든 사용자 정보 출력 -->
+    <h2>User List:</h2>
+   <ul>
+        <li th:each="user : ${users}" th:text="${user.name}"></li>
+    </ul>
+     
 </body>
 </html>
