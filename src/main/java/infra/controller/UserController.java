@@ -1,9 +1,11 @@
 package infra.controller;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,9 +22,11 @@ import infra.dto.request.UserRequest;
 import infra.entity.constant.UserRoleType;
 import infra.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
+@Slf4j
 public class UserController {
 
 	private final UserService userService;
@@ -57,32 +61,39 @@ public class UserController {
 	
 	@GetMapping("/login")
 	public String login(@RequestParam(value = "error", required = false) String error, Model model) {
-	    if (error != null) {
+		 log.info("로그인 페이지 !");
+		if (error != null) {
 	        model.addAttribute("errorMessage", "아이디 또는 비밀번호가 잘못되었습니다.");
 	    }
 	    return "login"; // 로그인 페이지로 이동
 	}
 	
 	@PostMapping("/login")
-	public String loginUser(@ModelAttribute UserRequest userRequest, Model model) {
-	    try {
-	        // 유저 요청을 DTO로 변환
+	public ResponseEntity<Map<String, String>> login(@RequestBody UserRequest userRequest) {
+	   log.info("post 로그인진입!");
+		try {
+	        // UserRequest에서 UserDto로 변환
 	        UserDto userDto = userRequest.toDto(UserRoleType.GUEST);
-	        
-	        // 서비스에서 사용자 인증을 처리하고 JWT 토큰을 발급받음
-	        String token = userService.authenticateUser(userDto);  // 토큰 발급 메서드
-	        
-	        // 인증 성공 후 JWT 토큰을 클라이언트에 저장하거나 세션에 저장
-	        // 예: HTTP 세션, 쿠키, 로`컬 스토리지 등에 토큰 저장
-	        model.addAttribute("jwtToken", token);
-	        
-	        // 로그인 후 메인 페이지로 리다이렉트
-	        return "redirect:/";
+
+	        // 사용자 인증 및 JWT 토큰 발급
+	        String token = userService.authenticateUser(userDto);  // JWT 토큰 발급
+
+	        // 로그인 성공 시 메시지 및 토큰 반환
+	        Map<String, String> response = new HashMap<>();
+	        response.put("message", "로그인성공 !");
+	        response.put("token", token);
+
+	        return ResponseEntity.ok(response); // 200 OK와 함께 응답
 	    } catch (Exception e) {
-	        model.addAttribute("errorMessage", "로그인 오류: " + e.getMessage());
-	        return "login";  // 로그인 페이지로 돌아감
+	        // 로그인 실패 시 메시지 반환
+	        Map<String, String> response = new HashMap<>();
+	        response.put("message", "로그인 실패: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); // 401 Unauthorized
 	    }
 	}
+
+
+	
 
 
 	@GetMapping("/signup")

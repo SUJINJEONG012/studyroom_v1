@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final UserDetailsService userDetailsService;
+	private final UserRepository userRepository;
 	private final CorsConfig corsConfig;
 
 	@Bean
@@ -48,13 +48,21 @@ public class SecurityConfig {
     	.addFilter(new JwtAuthenticationFilter(authenticationManager))
     	
     	// 요청 시 JWT 토큰을 검증하는 필터 추가 (JwtAuthorizationFilter)
-    	.addFilter(new JwtAuthorizationFilter(authenticationManager, userDetailsService))
+    	.addFilter(new JwtAuthorizationFilter(authenticationManager, userRepository))
+    	
     	.csrf(AbstractHttpConfigurer::disable)
+    	
     	.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    	.formLogin(AbstractHttpConfigurer::disable)
-        .httpBasic(AbstractHttpConfigurer::disable);
     	
+    	.formLogin(AbstractHttpConfigurer::disable)
+        .httpBasic(AbstractHttpConfigurer::disable)
+    	
+		 // 경로별 권한 설정
+        .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/login").permitAll() // 로그인 경로는 인증 없이 접근 가능
+                .anyRequest().authenticated()); // 다른 모든 요청은 인증 필요
+      
 
 		return http.build();
 	}

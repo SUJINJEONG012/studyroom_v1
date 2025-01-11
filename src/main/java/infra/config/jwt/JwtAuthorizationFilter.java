@@ -25,47 +25,65 @@ import lombok.RequiredArgsConstructor;
 //인증, 인가 실행될때 자동으로 호출되는 필터
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-	private final  UserDetailsService userDetailsService;
+	private final  UserRepository userRepository;
 	
-	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
 		super(authenticationManager);
-		this.userDetailsService = userDetailsService;
+		this.userRepository = userRepository;
 	}
 
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		
-		// 헤더에 Authorizaion 키 여부 확인
-		String header = request.getHeader(JwtProperties.HEADER_STRING);
-		if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
-			chain.doFilter(request, response);
-			return;
-		}
-		
-		// 키가 존재한다면 -> UserDetailsService의 loadByUsername.... 메소드로 토큰 검증(인증)
-		String token = request.getHeader(JwtProperties.HEADER_STRING)
-								.replace(JwtProperties.TOKEN_PREFIX, "");
-		
-		
-		String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-								.getClaim("uid").asString();
-		
-		if (username != null) {
-			// Optional에서 User 객체를 꺼내기
-						User user =  userDetailsService.findByUid(username)
-			                                      .orElseThrow(() -> new RuntimeException("User not found"));
+	        throws IOException, ServletException {
+	    
+	    // 헤더에서 Authorization 키 확인
+	    String header = request.getHeader(JwtProperties.HEADER_STRING);
+	    
+	    if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+	        chain.doFilter(request, response);
+	        return;
+	    }
+	    
+	    // Authorization 헤더에서 토큰 추출
+	    String token = header.replace(JwtProperties.TOKEN_PREFIX, "");
 
-			// 인가
-			PrincipalDetails principalDetails = new PrincipalDetails(User);
-			Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, 
-																					null, 
-																					principalDetails.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		}
+	    try {
+	        // JWT 토큰 검증
+	        String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
+	                .build()
+	                .verify(token)
+	                .getClaim("uid")
+	                .asString();
+	        
+	        if (username != null) {
+	            // DB에서 유저 조회
+	            User user = userRepository.findByUid(username)
+	                    .orElseThrow(() -> new RuntimeException("User not found"));
+	            
+	            // PrincipalDetails 객체 생성
+	            PrincipalDetails principalDetails = new PrincipalDetails(user);
+	            
+	            // 인증 객체 생성
+	            Authentication authentication = new UsernamePasswordAuthenticationToken(
+	                    principalDetails, 
+	                    null, 
+	                    principalDetails.getAuthorities()
+	            );
+	            
+	            // SecurityContext에 인증 객체 설정
+	            SecurityContextHolder.getContext().setAuthentication(authentication);
+	        }
+	    } catch (Exception e) {
+	        // 토큰이 유효하지 않거나 만료된 경우 403 Forbidden 상태 코드 반환
+	        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+	        response.getWriter().write("Forbidden: Invalid or expired token");
+	        return;
+	    }
 
-		chain.doFilter(request, response);
+	    // 필터 체인 계속 진행
+	    chain.doFilter(request, response);
 	}
+
 	
 }

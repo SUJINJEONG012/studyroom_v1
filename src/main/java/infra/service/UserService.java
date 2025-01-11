@@ -1,5 +1,6 @@
 package infra.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,7 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import infra.config.jwt.JwtTokenProvider;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+
+import infra.config.jwt.JwtProperties;
 import infra.dto.UserDto;
 import infra.entity.User;
 import infra.entity.constant.UserRoleType;
@@ -24,27 +28,28 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	 private final AuthenticationManager authenticationManager;
-	    private final JwtTokenProvider jwtTokenProvider;
+	private final AuthenticationManager authenticationManager;
 	
-	public String authenticateUser(UserDto userDto) {
-        try {
-            // 사용자 인증 (예: UsernamePasswordAuthenticationToken 사용)
-            UsernamePasswordAuthenticationToken authenticationToken = 
-                    new UsernamePasswordAuthenticationToken(userDto.getUid(), userDto.getPassword());
-            
-            // 인증 매니저로 인증을 시도
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            
-            // 인증 성공 시 JWT 토큰 발급
-            String token = jwtTokenProvider.generateToken(authentication);
-            return token;
-        } catch (Exception e) {
-            throw new RuntimeException("Authentication failed: " + e.getMessage());
-        }
+	 // 사용자 인증 후 JWT 토큰 발급
+    public String authenticateUser(UserDto userDto) throws Exception {
+        // 인증 토큰 생성
+        UsernamePasswordAuthenticationToken authenticationToken = 
+            new UsernamePasswordAuthenticationToken(userDto.getUid(), userDto.getPassword());
+
+        // 인증 처리
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        // 인증 성공 후 JWT 토큰 생성
+        String jwtToken = JWT.create()
+            .withSubject(authentication.getName())  // 사용자 이름
+            .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))  // 만료 시간
+            .withClaim("uid", userDto.getUid())  // 추가적인 claim, 예: 사용자 ID
+            .sign(Algorithm.HMAC512(JwtProperties.SECRET));  // 비밀 키로 서명
+
+        return jwtToken;
     }
-	
-	
+    
+
 	public void registerUser(UserDto userDto) {
 		
 //		if(userRepository.existsById(userDto.getUid())) {

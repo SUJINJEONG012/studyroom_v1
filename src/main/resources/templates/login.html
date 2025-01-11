@@ -9,7 +9,7 @@
 
 
 <!-- <form action="/login" method="POST"> -->
-<form id="loginForm">
+<form id="loginForm" action="/login" method="POST">
     <label for="uid">uid:</label>
     <input type="text" id="uid" name="uid" required>
     <label for="password">Password:</label>
@@ -36,6 +36,7 @@
 	        uid: document.getElementById("uid").value,
 	        password: document.getElementById("password").value
 	    };
+	    
 
 	    fetch("/login", {
 	        method: "POST",
@@ -46,18 +47,20 @@
 	    })
 	    .then(response => {
 	        if (response.ok) {
-	            return response.json();
+	            return response.json(); // 응답을 JSON으로 처리
 	        } else {
-	            throw new Error("로그인 실패");
+	            // 서버가 401을 반환할 경우
+	            return response.json().then(data => {
+	                throw new Error(data.message || "로그인 실패");
+	            });
 	        }
 	    })
 	    .then(data => {
 	        if (data.message === "로그인성공 !") {
-	        	// 성공 시 받은 JWT 토큰을 localStorage에 저장
-                const token = data.token; // 여기서 서버가 반환한 JWT 토큰을 받는다고 가정합니다.
-                localStorage.setItem('jwtToken', token); // 토큰을 localStorage에 저장
+	            // 성공 시 받은 JWT 토큰을 localStorage에 저장
+	            const token = data.token; // 서버가 반환한 JWT 토큰
+	            localStorage.setItem('jwtToken', token);
 
-                
 	            // 성공 메시지 출력
 	            document.getElementById("successMessage").style.display = "block";
 	            document.getElementById("message").innerText = data.message;
@@ -66,39 +69,17 @@
 	            setTimeout(function() {
 	                window.location.href = "/"; // 예: /home 페이지로 리다이렉트
 	            }, 2000); // 2초 후 리다이렉트
-	        } else {
-	            // 실패 메시지 출력
-	            document.getElementById("errorMessage").style.display = "block";
 	        }
 	    })
 	    .catch(error => {
+	        // 실패 메시지 출력
 	        document.getElementById("errorMessage").style.display = "block";
-	        console.error("Login error:", error);
+	        console.error("Login error:", error.message); // 오류 메시지 출력
+	        document.getElementById("errorMessage").innerText = `ssError: ${error.message}`; // 오류 메시지 UI에 반영
 	    });
 	});
- 
-//인증된 요청 보내는 예시 함수
- function sendAuthenticatedRequest() {
-     const token = localStorage.getItem('jwtToken');
-     if (token) {
-         fetch("/some-secure-endpoint", {
-             method: "GET",
-             headers: {
-                 "Authorization": `Bearer ${token}`  // JWT 토큰을 Authorization 헤더에 포함
-             }
-         })
-         .then(response => response.json())
-         .then(data => {
-             console.log("Secure data:", data);
-         })
-         .catch(error => {
-             console.error("Request failed:", error);
-         });
-     } else {
-         console.error("No JWT token found.");
-     }
- }
 
+ 
 </script>
 
 </body>
