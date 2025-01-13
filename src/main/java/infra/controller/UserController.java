@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import infra.dto.UserDto;
 import infra.dto.request.UserRequest;
@@ -58,18 +60,27 @@ public class UserController {
 	
 	@GetMapping("/")
 	public String mainPage(Model model) {
-	    // 현재 로그인한 사용자 정보 가져오기
-	    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    // 현재 인증 상태 확인 (디버깅)
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        System.out.println("현재 인증되지 않은 상태입니다.");
+	    } else {
+	        System.out.println("인증된 사용자: " + authentication.getName());
+	        System.out.println("Authentication 객체: " + authentication);
+	        System.out.println("Principal 객체: " + authentication.getPrincipal());
+	    }
 
+	    // 현재 로그인한 사용자 정보 가져오기
+	    Object principal = authentication.getPrincipal();
 	    if (principal instanceof UserDetails) {
 	        UserDetails userDetails = (UserDetails) principal;
-	        String username = userDetails.getUsername();
-	        System.out.println("현재 로그인한 사용자 이름: " + username);
-	        model.addAttribute("username", username);
+	        String uid = userDetails.getUsername();
+	        System.out.println("현재 로그인한 사용자 이름: " + uid);
+	        model.addAttribute("uid", uid);
 	    } else {
 	        // 인증되지 않은 경우
 	        System.out.println("로그인된 사용자가 없습니다.");
-	        model.addAttribute("username", "Guest"); // 기본 메시지 설정
+	        model.addAttribute("uid", "22"); // 기본 메시지 설정
 	    }
 
 	    // 모든 유저 정보를 가져옴
@@ -79,8 +90,28 @@ public class UserController {
 
 	    return "index"; // index.html로 이동
 	}
+
 	
-	
+	  // 모든 사용자 가져오기
+    @GetMapping("/users")
+    @ResponseBody
+    public List<UserDto> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    
+	// 현재 로그인한 사용자 가져오기
+//    @GetMapping("/auth/current")
+//    @ResponseBody
+//    public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+//        if (principalDetails == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//        }
+//        UserDto currentUser = userService.getUserByUid(principalDetails.getUser().getUid());
+//        return ResponseEntity.ok(currentUser);
+//    }
+    
+    
 	
 	
 	@GetMapping("/login")

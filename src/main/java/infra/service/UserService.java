@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,10 @@ public class UserService {
 
 	private final AuthenticationManager authenticationManager;
 	
-	 // 사용자 인증 후 JWT 토큰 발급
+	
+    
+    
+	// 사용자 인증 후 JWT 토큰 발급
     public String authenticateUser(UserDto userDto) throws Exception {
         // 인증 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken = 
@@ -94,5 +98,7 @@ public class UserService {
 				.map(UserDto::fromEntity) 
 				.collect(Collectors.toList());
 	}
+
+    
 
 }

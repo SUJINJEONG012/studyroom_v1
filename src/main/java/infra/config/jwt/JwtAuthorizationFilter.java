@@ -39,29 +39,35 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	    
 	    // 헤더에서 Authorization 키 확인
 	    String header = request.getHeader(JwtProperties.HEADER_STRING);
+	    System.out.println("헤더에서 받은 Authorization 값 : " + header);
 	    
 	    if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+	    	System.out.println("토큰이 없거나 잘못된 형식입니다.");
 	        chain.doFilter(request, response);
 	        return;
+	    }else {
+	    	System.out.println("헤더에서 받은 토큰: " + header);
 	    }
 	    
 	    // Authorization 헤더에서 토큰 추출
 	    String token = header.replace(JwtProperties.TOKEN_PREFIX, "");
-
+	    System.out.println("헤더에서 토큰 추출 : " + token);
+	    
 	    try {
 	        // JWT 토큰 검증
-	        String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
+	        String uid = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
 	                .build()
 	                .verify(token)
 	                .getClaim("uid")
 	                .asString();
 	        
-	        if (username != null) {
-	            // DB에서 유저 조회
-	            User user = userRepository.findByUid(username)
+	        
+	        if (uid != null) {
+	            // DB에서 유저 조회 => 사용자 인증
+	            User user = userRepository.findByUid(uid)
 	                    .orElseThrow(() -> new RuntimeException("User not found"));
 	            
-	            // PrincipalDetails 객체 생성
+	            // PrincipalDetails 객체 생성 => 권한 설정
 	            PrincipalDetails principalDetails = new PrincipalDetails(user);
 	            
 	            // 인증 객체 생성
@@ -80,6 +86,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	        response.getWriter().write("Forbidden: Invalid or expired token");
 	        return;
 	    }
+	    
+	    
 
 	    // 필터 체인 계속 진행
 	    chain.doFilter(request, response);

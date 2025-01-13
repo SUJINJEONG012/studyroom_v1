@@ -7,36 +7,92 @@
 </head>
 <body>
 	<h1>유저목록조회 도커에서 연결한 DB 를 로컬 localhost:3333 데이터 들고오는지 확인</h1>
-	<h2> 로그인 한 유저 : <span th:text="${username}"></span></h2>
-	<!-- <table>
-		<thead>
-			<tr>
-				<th>UID</th>
-			    <th>Email</th>
-			    <th>Role</th
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="user : ${users}">
-				<td th:text="${user.uid}"></td>
-				 <td th:text="${user.email}"></td>
-            <td th:text="${user.userRoleType}"></td>
-			</tr>
-		</tbody>
-	</table> -->
-	 <!-- 로그인된 사용자 이름 표시 -->
-    <p th:if="${username != null}">
-        Hello, <span th:text="${username}"></span>! Welcome back.
-    </p>
-    <p th:if="${username == null}">
-        Hello, Guest! Please <a href="/login">login</a>.
-    </p>
-    
-    <!-- 모든 사용자 정보 출력 -->
-    <h2>User List:</h2>
-   <ul>
-        <li th:each="user : ${users}" th:text="${user.name}"></li>
+
+	
+<p th:if="${uid != '22'}">
+    Hello, <span th:text="${uid}"></span>! Welcome back.
+</p>
+<p th:if="${uid == '22'}">
+    Hello, Guest! Please <a href="/login">login</a>.
+</p>
+
+	<!-- 모든 사용자 정보 출력 -->
+	<h2>User List1:</h2>
+	<ul th:each="user : ${users}">
+		<li th:text="${user.uid}"></li>
+		<p th:if="${uid != null}">
+			Hello, <span th:text="${uid}"></span>! Welcome back.
+		</p>
+		<p th:if="${uid == null}">
+			Hello, Guest! Please <a href="/login">login</a>.
+		</p>
+	</ul>
+	
+	<div id="user-list">
+    <h2>User List2:</h2>
+    <ul id="all-users">
+        <!-- 전체 사용자 목록 -->
     </ul>
-     
+    <div id="current-user">
+        <!-- 로그인한 사용자 정보 -->
+        <p id="greeting"></p>
+    </div>
+    
+    <div>
+        <p th:if="${uid != null}">
+            Hello, <span th:text="${uid}"></span>! Welcome back.
+        </p>
+        <p th:if="${uid == null}">
+            Hello, Guest! Please <a href="/login">login</a>.
+        </p>
+    </div>
+
+    <!-- 모든 사용자 목록 -->
+    <h2>User List3:</h2>
+    <ul>
+        <li th:each="user : ${users}" th:text="${user.uid}"></li>
+    </ul>
+    <h2 th:text="${uid}">현재 로그인한계쩡 :  </h2>
+</div>
+
+<script>
+function fetchDataWithToken() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        console.error("토큰이 없습니다. 로그인 후 다시 시도하세요.");
+        alert("로그인이 필요합니다.");
+        window.location.href = "/login"; // 로그인 페이지로 리다이렉트
+        return;
+    }
+
+    fetch("/", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`, // Bearer 토큰 추가
+        },
+    })
+    .then((response) => {
+        // Content-Type 확인
+        const contentType = response.headers.get("Content-Type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("JSON 응답이 아닙니다. 서버에서 HTML이 반환된 것 같습니다.");
+        }
+        if (!response.ok) {
+            throw new Error(`요청 실패: 상태 코드 ${response.status}`);
+        }
+        return response.json(); // JSON 응답 반환
+    })
+    .then((data) => {
+        console.log("데이터:", data); // 성공적으로 데이터 출력
+    })
+    .catch((error) => {
+        console.error("요청 실패:", error);
+        alert(error.message);
+    });
+}
+
+
+</script>
 </body>
 </html>
