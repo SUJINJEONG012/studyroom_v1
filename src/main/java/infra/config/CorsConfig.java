@@ -17,8 +17,8 @@ public class CorsConfig {
 	      config.addAllowedOrigin("*"); 	// cors 허가 도메인
 	      config.addAllowedHeader("*");		// 허가 헤더 정보값
 	      config.addAllowedMethod("*");		// 허가 메서드
-
-	      source.registerCorsConfiguration("/api/**", config);
+	      config.addExposedHeader("Authorization"); // Authorization 헤더 노출
+	      source.registerCorsConfiguration("/**", config);
 	      return new CorsFilter(source);
 	   }
 }

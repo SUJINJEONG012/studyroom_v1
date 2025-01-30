@@ -27,42 +27,7 @@
 		<p id="message"></p>
 	</div>
 
-	<script>
- /* document.getElementById("loginForm").addEventListener("submit", function(event) {
-	    event.preventDefault();
-	    
-	    const loginData = {
-	        uid: document.getElementById("uid").value,
-	        password: document.getElementById("password").value
-	    };
-
-	    // fetch로 로그인 요청
-	    fetch("/login", {
-	        method: "POST",
-	        headers: {
-	            "Content-Type": "application/json"
-	        },
-	        body: JSON.stringify(loginData)
-	    })
-	    .then(response => response.json())
-	    .then((data) => {
-	        if (data.token) {
-	            // 로그인 성공 시 토큰 저장
-	            alert("로그인 성공");
-	            alert("data.token:" + data.token);
-	            localStorage.setItem("token", data.token);  // 받은 JWT 토큰을 로컬 스토리지에 저장
-	            window.location.href = data.redirect || "/";  // 로그인 후 리다이렉트 (디폴트는 /)
-	        } else {
-	            alert("로그인 실패");
-	        }
-	    })
-	    .catch((error) => {
-	        console.error("Error:", error);
-	        alert("로그인 요청 중 오류 발생");
-	    });
-	}); */
-
-	
+	<script>	
 	document.getElementById("loginForm").addEventListener("submit", function(e) {
 	    e.preventDefault(); // 폼 제출 시 새로고침 방지
 
@@ -71,27 +36,34 @@
 	        password: document.getElementById("password").value
 	    };
 
-	    // 로그인 요청을 fetch로 보냄
-	    fetch("login", {
+	    fetch("/login", {
 	        method: "POST",
 	        headers: {
 	            "Content-Type": "application/json"
 	        },
 	        body: JSON.stringify(loginData)
 	    })
-	    .then(response => response.json())
-	    .then((data) => {
-	        if (data.token) {
-	            // 로그인 성공 후, 토큰을 로컬 스토리지에 저장
-	            localStorage.setItem("token", data.token);
-	            window.location.href = data.redirect || "/"; // 리다이렉트 경로
-	        } else {
-	            alert("로그인 실패");
-	        }
-	    })
-	    .catch((error) => {
+	    .then(response => {
+    if (!response.ok) {
+        return response.text();  // 오류 응답은 텍스트로 반환
+    }
+    return response.json();  // 정상적인 응답은 JSON으로 처리
+})
+
+	.then(data => {
+		if (data.token) {
+	        // 토큰을 localStorage에 저장
+	        localStorage.setItem("token", data.token);
+	        console.log("Token saved:", data.token);
+
+	        // 리다이렉트 처리
+	        window.location.href = data.redirect || '/';  // redirect 값이 있으면 그 경로로, 없으면 기본 '/'로 리다이렉트
+	    } else {
+	        console.error("Token not found in response");
+	    }
+})
+	    .catch(error => {
 	        console.error("Error:", error);
-	        alert("로그인 요청 중 오류 발생");
 	    });
 	});
 
