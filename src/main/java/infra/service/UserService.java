@@ -84,6 +84,8 @@ public class UserService {
 		return userRepository.findById(id)
 				.map(UserDto::fromEntity);
 	}
+	
+	
 	public Optional<User> findByUid(String uid) {
 	    return userRepository.findByUid(uid);
 	}
@@ -98,6 +100,8 @@ public class UserService {
 				.map(UserDto::fromEntity) 
 				.collect(Collectors.toList());
 	}
+
+
 
     
 

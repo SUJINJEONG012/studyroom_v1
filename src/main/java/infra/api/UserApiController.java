@@ -24,7 +24,7 @@ public class UserApiController {
 
         PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
         Map<String, String> response = new HashMap<>();
-        response.put("username", userDetails.getUsername());
+        response.put("uid", userDetails.getUsername());
 
         return ResponseEntity.ok(response);
     }

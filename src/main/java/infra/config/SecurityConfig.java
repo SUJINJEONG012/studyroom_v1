@@ -67,7 +67,7 @@ public class SecurityConfig {
     	
 		 // 경로별 권한 설정
         .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/", "/login","/signup").permitAll() // 로그인 경로는 인증 없이 접근 가능
+                .requestMatchers("/", "/login","/signup","/js/**", "/css/**", "/images/**", "/static/**").permitAll() // 로그인 경로는 인증 없이 접근 가능
                 .requestMatchers("/admin/**").hasRole("ADMIN") // 예시: admin 권한이 필요한 경로
                 .anyRequest().authenticated()); // 다른 모든 요청은 인증 필요
       
