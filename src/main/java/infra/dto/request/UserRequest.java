@@ -36,7 +36,10 @@ public class UserRequest {
     					  uid, 
     					  password, 
     					  email, 
-    					  userRole);
+    					  userRole,
+    					  businessNum,
+    					  null,
+    					  null);
     }
     
 }

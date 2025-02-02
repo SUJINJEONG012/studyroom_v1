@@ -6,10 +6,12 @@ import infra.entity.User;
 import infra.entity.constant.UserRoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @Getter
 @Setter
@@ -46,8 +48,7 @@ public class UserDto {
     }
 
   
-    // 기본 생성자 추가 (Lombok으로 대체할 수도 있음)
-    public UserDto() {}
+
     
  // Entity -> DTO 변환
     public static UserDto fromEntity(User user) {

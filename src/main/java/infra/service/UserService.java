@@ -102,6 +102,12 @@ public class UserService {
 	}
 
 
+	public User getUserById(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
     
 

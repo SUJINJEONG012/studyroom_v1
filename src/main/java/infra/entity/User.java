@@ -26,7 +26,7 @@ public class User extends AuditingFields {
     private String email;
   
     
-    @Column
+    @Column(name="business_num")
 	private Long businessNum;
     
 	@Column(name = "role_type", columnDefinition = "VARCHAR(50)")

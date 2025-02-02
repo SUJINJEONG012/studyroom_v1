@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import infra.dto.RoomDto;
 import infra.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * API
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/room")
 @RestController
+@Slf4j
 public class RoomController {
 	
 	private final RoomService roomService;

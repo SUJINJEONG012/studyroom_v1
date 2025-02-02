@@ -22,11 +22,6 @@ public class MainController {
 
 	private final UserService userService;
 
-//	@GetMapping("/")
-//	public String mainPage() {
-//		return "forward:/posts";
-//	}
-	
 
 	
 	@GetMapping("/host/signup")

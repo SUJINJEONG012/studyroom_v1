@@ -5,21 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.view.RedirectView;
 
-import infra.config.auth.PrincipalDetails;
 import infra.dto.UserDto;
 import infra.dto.request.UserRequest;
 import infra.entity.constant.UserRoleType;
@@ -30,9 +29,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Controller
 @Slf4j
+@RequestMapping("/user")
 public class UserController {
 
+	
 	private final UserService userService;
+	
+	
+	@GetMapping("/mypage")
+	public String myPage() {
+		return "/user/mypage";
+	}
 	
 	 
 	
@@ -42,9 +49,11 @@ public class UserController {
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
+    
+
 
 	@GetMapping("/login")
-	public String login(@RequestParam(value = "error", required = false) String error, Model model) {
+	public String login(@RequestParam(required = false) String error, Model model) {
 		 log.info("로그인 페이지 !");
 		if (error != null) {
 	        model.addAttribute("errorMessage", "아이디 또는 비밀번호가 잘못되었습니다.");
@@ -53,7 +62,6 @@ public class UserController {
 	}
 	
 
-	
 	@PostMapping("/login")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> login(@RequestBody UserRequest userRequest) {
@@ -90,13 +98,9 @@ public class UserController {
 	}
 
 
-
-	
-
-
 	@GetMapping("/signup")
 	public String guestSignupPage() {
-		return "guest-sign-up";
+		return "/user/guest-sign-up";
 	}
 	
 	
@@ -109,11 +113,11 @@ public class UserController {
 			System.out.println("회원가입에서 입력한 값 : " + userRequest); // 로그 추가
 			System.out.println("디비에저장되는값 : " + userDto); // 로그 추가
 			
-			return "redirect:/login";
+			return "redirect:/user/login";
 		}catch(Exception e) {
 			System.out.println("회원가입 오류: " + 	e.getMessage()); 
 			 model.addAttribute("errorMessage", "회원가입에 실패했습니다: " + e.getMessage());
-		        return "guest-sign-up"; // 오류 발생 시 회원가입 페이지로 복귀
+		        return "/user/guest-sign-up"; // 오류 발생 시 회원가입 페이지로 복귀
 		}
 	}
 	

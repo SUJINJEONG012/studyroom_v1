@@ -16,7 +16,7 @@
 		<button type="submit">Login</button>
 	</form>
 
-
+<p><a href="/user/signup">회원가입</a></p>
 
 	<div id="errorMessage" style="color: red; display: none;">
 		<p>Error: Invalid credentials</p>
@@ -26,6 +26,8 @@
 	<div id="successMessage" style="color: green; display: none;">
 		<p id="message"></p>
 	</div>
+	
+	
 
 	<script>	
 	document.getElementById("loginForm").addEventListener("submit", function(e) {
@@ -36,7 +38,7 @@
 	        password: document.getElementById("password").value
 	    };
 
-	    fetch("/login", {
+	    fetch("/user/login", {
 	        method: "POST",
 	        headers: {
 	            "Content-Type": "application/json"

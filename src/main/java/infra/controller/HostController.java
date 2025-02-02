@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import infra.service.RoomService;
 import infra.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * API
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/host")
 @Controller
+@Slf4j
 public class HostController {
 
 	private final RoomService roomService;

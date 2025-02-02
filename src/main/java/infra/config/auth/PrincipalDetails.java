@@ -19,15 +19,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails {
 
-    private final User user;  // User 엔티티를 직접 사용
+    private static final long serialVersionUID = 1L;
+    
+    
+	private final User user;  // User 엔티티를 직접 사용
+    private final UserDto userDto;
 
-    private UserDto userDto;
-
-    // userDto를 초기화하는 생성자 추가
-    public void setUserDtoFromEntity() {
-        this.userDto = UserDto.fromEntity(user);
+    public PrincipalDetails(User user) {
+    	this.user=user;
+    	this.userDto=UserDto.fromEntity(user);
     }
+    // userDto를 초기화하는 생성자 추가
+//    public void setUserDtoFromEntity() {
+//        this.userDto = UserDto.fromEntity(user);
+//    }
 
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (user.getRoleType() == null) {
