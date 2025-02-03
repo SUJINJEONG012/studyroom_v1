@@ -2,8 +2,12 @@ package infra.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import infra.entity.User;
 import infra.entity.constant.UserRoleType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +26,11 @@ public class UserDto {
     private String email;
     private UserRoleType roleType;
     private Long businessNum;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
+    private Boolean hostMode = false;
+    
+	private LocalDateTime createdDate;  // 자동으로 변환하여 DB에 저장
+	private LocalDateTime modifiedDate;
+	 
     
    
     public UserDto(String uid, String password) {
@@ -39,12 +46,12 @@ public class UserDto {
     
     // 간단한 생성자 추가
     public static UserDto of(Long id, String uid,  String password, String email, UserRoleType roleType) {
-    	return UserDto.of(id, uid, password, email, roleType, null, null, null);
+    	return UserDto.of(id, uid, password, email, roleType, null, null, null, null);
     }
     
     public static UserDto of(Long id, String uid, String password, String email, UserRoleType roleType,
-    		Long businessNum, LocalDateTime createdDate, LocalDateTime modifiedDate) {
-    	return new UserDto(id, uid, password, email, roleType, businessNum, createdDate, modifiedDate);
+    		Long businessNum, Boolean hostMode, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    	return new UserDto(id, uid, password, email, roleType, businessNum,hostMode, createdDate, modifiedDate);
     }
 
   
@@ -71,11 +78,11 @@ public class UserDto {
     					id,
 						uid,
 						password, 
+							
 						email, 
 						roleType,
-						businessNum
-		);
-    }
+						businessNum);
+    	}
     
     
     

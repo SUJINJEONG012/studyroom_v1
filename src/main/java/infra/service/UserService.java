@@ -56,9 +56,6 @@ public class UserService {
 
 	public void registerUser(UserDto userDto) {
 		
-//		if(userRepository.existsById(userDto.getUid())) {
-//			throw new RuntimeException("이미 있는 아이디 입니다.");
-//		}
 		// 비즈니스로직에 따라 roleType 설정
 		if(userDto.getBusinessNum() != null) {
 			// 비즈니스로직이 있다면 HOST
@@ -79,6 +76,27 @@ public class UserService {
 		userRepository.save(user);
 		
 	}
+	
+	
+	// 호스트모드 
+//	public void updateHostMode(Long id, boolean hostMode) {
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        if (!"ROLE_HOST".equals(user.getRoleType())) {
+//            throw new RuntimeException("Only ROLE_HOST users can toggle host mode");
+//        }
+//
+//        // DTO변환후 값 변경
+//        UserDto userDto = UserDto.fromEntity(user);
+//        userDto.setHostMode(hostMode);
+//        
+//        // 다시 엔티티로 변환 후 저장
+//        User updateUser = userDto.toEntity();
+//        userRepository.save(updateUser);
+//    }
+	
+	
 	
 	public Optional<UserDto> searchUser(Long id) {
 		return userRepository.findById(id)

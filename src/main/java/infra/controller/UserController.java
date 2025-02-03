@@ -109,6 +109,10 @@ public class UserController {
 	public String signup(@ModelAttribute UserRequest userRequest, Model model) {
 		try {
 			UserDto userDto = userRequest.toDto(UserRoleType.GUEST);
+			if (userRequest.getHostMode() == null) {
+		        userRequest.setHostMode(false);  // null일 경우 false로 기본값 설정
+		    }
+			
 			userService.registerUser(userDto);
 			System.out.println("회원가입에서 입력한 값 : " + userRequest); // 로그 추가
 			System.out.println("디비에저장되는값 : " + userDto); // 로그 추가

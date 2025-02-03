@@ -1,5 +1,6 @@
 package infra.api;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,11 @@ public class UserApiController {
 	    Map<String, String> response = new HashMap<>();
 	    response.put("uid", userDetails.getUsername());
 	    response.put("email", userDetails.getUserDto().getEmail());
+	    response.put("businessNum", String.valueOf(userDetails.getUserDto().getBusinessNum()));
+
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	    String formattedDate = userDetails.getUserDto().getCreatedDate().format(formatter);
+	    response.put("createdDate", formattedDate);
 
 	    return ResponseEntity.ok(response);
 	}

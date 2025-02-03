@@ -4,6 +4,7 @@ import infra.dto.UserDto;
 import infra.entity.constant.UserRoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /*
@@ -15,6 +16,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @Getter
+@Setter
 public class UserRequest {
 	private Long id;
     private String uid;
@@ -22,13 +24,11 @@ public class UserRequest {
     private String email;
     private UserRoleType userRoleType;
     private Long businessNum;
+    private Boolean hostMode;
     
-    public static UserRequest of(Long id, String uid, String password, String email,UserRoleType userRoleType) {
-    	return new UserRequest(id,uid, password, email, userRoleType, null); 
-    }
-    
-    public static UserRequest of(Long id, String uid, String password, String email, UserRoleType userRoleType, Long businessNum) {
-    	return new UserRequest(id,uid, password, email, userRoleType, businessNum); 
+  
+    public static UserRequest of(Long id, String uid, String password, String email, UserRoleType userRoleType, Long businessNum, boolean hostMode) {
+    	return new UserRequest(id,uid, password, email, userRoleType, businessNum,hostMode); 
     }
     
     public UserDto toDto(UserRoleType userRole) {
@@ -38,8 +38,8 @@ public class UserRequest {
     					  email, 
     					  userRole,
     					  businessNum,
-    					  null,
-    					  null);
+    					  hostMode,
+    					  null,null);
     }
     
 }

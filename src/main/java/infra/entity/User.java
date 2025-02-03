@@ -1,5 +1,7 @@
 package infra.entity;
 
+
+
 import infra.common.utils.UserRoleTypeAttributeConverter;
 import infra.entity.constant.UserRoleType;
 import jakarta.persistence.Column;
@@ -29,10 +31,15 @@ public class User extends AuditingFields {
     @Column(name="business_num")
 	private Long businessNum;
     
+    private Boolean hostMode; // ROLE_GUEST면 NULL, ROLE_HOST면 TRUE/FALSE
+    
 	@Column(name = "role_type", columnDefinition = "VARCHAR(50)")
     @Convert(converter = UserRoleTypeAttributeConverter.class)
 	private UserRoleType roleType;
 
+	
+	
+	 
     protected User() {}
     
 	private User(Long id, String uid, String password, String email, UserRoleType roleType, Long businessNum) {
