@@ -26,7 +26,7 @@ public class UserDto {
     private String email;
     private UserRoleType roleType;
     private Long businessNum;
-    private Boolean hostMode = false;
+    private Boolean hostMode;
     
 	private LocalDateTime createdDate;  // 자동으로 변환하여 DB에 저장
 	private LocalDateTime modifiedDate;
@@ -51,7 +51,7 @@ public class UserDto {
     
     public static UserDto of(Long id, String uid, String password, String email, UserRoleType roleType,
     		Long businessNum, Boolean hostMode, LocalDateTime createdDate, LocalDateTime modifiedDate) {
-    	return new UserDto(id, uid, password, email, roleType, businessNum,hostMode, createdDate, modifiedDate);
+    	return new UserDto(id, uid, password, email, roleType, businessNum, hostMode, createdDate, modifiedDate);
     }
 
   
@@ -66,8 +66,10 @@ public class UserDto {
         dto.setEmail(user.getEmail());
         dto.setRoleType(user.getRoleType()); // roleType을 설정
         dto.setBusinessNum(user.getBusinessNum()); // businessNum을 설정
+        dto.setHostMode(user.getHostMode());
         dto.setCreatedDate(user.getCreatedDate()); // createdDate 설정
         dto.setModifiedDate(user.getModifiedDate()); // modifiedDate 설정
+     
         return dto;
     }
     
@@ -77,11 +79,11 @@ public class UserDto {
     	return User.of(
     					id,
 						uid,
-						password, 
-							
+						password, 					
 						email, 
 						roleType,
-						businessNum);
+						businessNum,
+						hostMode);
     	}
     
     

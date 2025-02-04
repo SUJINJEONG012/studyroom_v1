@@ -11,5 +11,6 @@ import infra.entity.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 
 	// 반환 타입을 Optional<User>로 수정
+	
     Optional<User> findByUid(String uid);
 }

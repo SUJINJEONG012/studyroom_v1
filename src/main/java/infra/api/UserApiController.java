@@ -1,5 +1,6 @@
 package infra.api;
 
+
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,19 +14,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import infra.config.auth.PrincipalDetails;
+import infra.repository.UserRepository;
 import infra.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class UserApiController {
 
 	@Value("${jwt.secretKey}")  // application.properties에서 SECRET_KEY 가져오기
     private String secretKey;
 	
 	private final UserService userService;
+	private final UserRepository userRepository;
 	
 	
 	 
@@ -54,17 +59,21 @@ public class UserApiController {
 
 	    PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
 	    System.out.println("📌 인증된 사용자 UID: " + userDetails.getUsername()); // 확인용
-
-	    Map<String, String> response = new HashMap<>();
+	    
+	    Map<String, Object> response = new HashMap<>();
 	    response.put("uid", userDetails.getUsername());
 	    response.put("email", userDetails.getUserDto().getEmail());
 	    response.put("businessNum", String.valueOf(userDetails.getUserDto().getBusinessNum()));
+	    log.info("📌 businessNum:{}" , userDetails.getUserDto().getBusinessNum());
 
+	    response.put("hostMode",userDetails.getUserDto().getHostMode()); 
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	    String formattedDate = userDetails.getUserDto().getCreatedDate().format(formatter);
 	    response.put("createdDate", formattedDate);
 
 	    return ResponseEntity.ok(response);
 	}
+	
+	
 	
 }

@@ -30,8 +30,9 @@ public class User extends AuditingFields {
     
     @Column(name="business_num")
 	private Long businessNum;
-    
-    private Boolean hostMode; // ROLE_GUEST면 NULL, ROLE_HOST면 TRUE/FALSE
+   
+    @Column(nullable = false)
+    private Boolean hostMode; // hostMode 필드 추가
     
 	@Column(name = "role_type", columnDefinition = "VARCHAR(50)")
     @Convert(converter = UserRoleTypeAttributeConverter.class)
@@ -42,21 +43,29 @@ public class User extends AuditingFields {
 	 
     protected User() {}
     
-	private User(Long id, String uid, String password, String email, UserRoleType roleType, Long businessNum) {
+	private User(Long id, String uid, String password, String email, UserRoleType roleType, Long businessNum, Boolean hostMode) {
 		this.id=id;
 		this.uid = uid;
 		this.password = password;
 		this.email = email;
 		this.roleType = roleType;
 		this.businessNum = businessNum;
+		this.hostMode= hostMode;
+		
 	}
 	
 	
 	// 아래방법이 더 효율적
-	public static User of(Long id, String uid, String password, String email, UserRoleType roleType, Long businessNum) {
+	public static User of(Long id, 
+			String uid, 
+			String password, 
+			String email, UserRoleType roleType, 
+			Long businessNum,
+			Boolean hostMode) {
 		return new User(
-				id, uid, password, email, roleType, businessNum);
+				id, uid, password, email, roleType, businessNum,hostMode);
 	}
+
 	
 	
 //	public static User of(String uid, String password, String email, UserRoleType roleType, Long businessNum) {

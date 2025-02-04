@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,14 +55,25 @@ public class UserService {
 
 	public void registerUser(UserDto userDto) {
 		
-		// 비즈니스로직에 따라 roleType 설정
-		if(userDto.getBusinessNum() != null) {
-			// 비즈니스로직이 있다면 HOST
-			userDto.setRoleType(UserRoleType.HOST);
-		}else {
-			// 없으면 GUEST
-			userDto.setRoleType(UserRoleType.GUEST);
-		}
+//		// 비즈니스로직에 따라 roleType 설정
+//		if(userDto.getBusinessNum() != null) {
+//			// 비즈니스로직이 있다면 HOST
+//			userDto.setRoleType(UserRoleType.HOST);
+//		}else {
+//			// 없으면 GUEST
+//			userDto.setRoleType(UserRoleType.GUEST);
+//		}
+		
+		// 비즈니스 로직에 따라 roleType 설정
+	    if (userDto.getBusinessNum() != null && userDto.getBusinessNum() != 0) {
+	        // 비즈니스 번호가 있으면 HOST
+	        userDto.setRoleType(UserRoleType.HOST);
+	        userDto.setHostMode(true); // businessNum이 있으면 hostMode = true
+	    } else {
+	        // 없으면 GUEST
+	        userDto.setRoleType(UserRoleType.GUEST);
+	        userDto.setHostMode(false); // businessNum이 없으면 hostMode = false
+	    }
 		
 		
 		//암호화추가
@@ -76,26 +86,6 @@ public class UserService {
 		userRepository.save(user);
 		
 	}
-	
-	
-	// 호스트모드 
-//	public void updateHostMode(Long id, boolean hostMode) {
-//        User user = userRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        if (!"ROLE_HOST".equals(user.getRoleType())) {
-//            throw new RuntimeException("Only ROLE_HOST users can toggle host mode");
-//        }
-//
-//        // DTO변환후 값 변경
-//        UserDto userDto = UserDto.fromEntity(user);
-//        userDto.setHostMode(hostMode);
-//        
-//        // 다시 엔티티로 변환 후 저장
-//        User updateUser = userDto.toEntity();
-//        userRepository.save(updateUser);
-//    }
-	
 	
 	
 	public Optional<UserDto> searchUser(Long id) {
@@ -120,12 +110,7 @@ public class UserService {
 	}
 
 
-	public User getUserById(String userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
+	
 
     
 
