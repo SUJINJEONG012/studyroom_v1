@@ -59,13 +59,13 @@ input:checked + .slider:before {
 <body>
 <div th:replace="~{layout/header :: header}">Header</div>
     <h1>마이페이지</h1>
-    <p id="useruid">사용자 UID: </p>
-    <p id="useremail">이메일: </p>
-    <p id="businessNum">비즈니스: </p>
-    <p id="createdDate">생성일: </p>
+    <p id="useruid"></p>
+    <p id="useremail"></p>
+    <p id="businessNum"></p>
+    <p id="createdDate"></p>
 
  	<!-- 호스트 모드 스위치를 감싸는 div 추가 -->
-<div id="hostModeContainer" style="display: none;">
+<div id="hostModeContainer">
     <label class="switch">
         <input type="checkbox" id="hostModeSwitch">
         <span class="slider round"></span>
@@ -108,15 +108,19 @@ input:checked + .slider:before {
 	            // 사용자 정보 표시
 	            document.getElementById("useruid").innerText = `사용자 ID: ${data.uid}`;
 	            document.getElementById("useremail").innerText = `이메일: ${data.email}`;
-	            document.getElementById("businessNum").innerText = `사업자번호 : ${data.businessNum}`;
+	            document.getElementById("businessNum").innerText = (data.businessNum && data.businessNum !== "null") ? `사업자번호 : ${data.businessNum}` : ` 사업자번호 : 사업자번호가 없습니다`;
 	            document.getElementById("createdDate").innerText = `가입한날: ${data.createdDate}`;
-	   
-	         	// ✅ 호스트 모드 스위치 설정 (사업자번호만 있는경우 노출 되도록 )
+	            console.log("사업자번호:", data.businessNum); // 확인용 로그
+	            console.log("businessNum 타입:", typeof data.businessNum);
+	            // ✅ 호스트 모드 스위치 설정 (사업자번호만 있는경우 노출 되도록 )
 	            const hostModeContainer = document.getElementById("hostModeContainer");
 	         	const hostModeSwitch = document.getElementById("hostModeSwitch");
 	            const hostModeText = document.getElementById("hostModeText");
-	            if(!data.businessNum || data.businessNum === "0"){
+	            
+	            if(!data.businessNum || data.businessNum == "null" || data.businessNum === "0"){
+	            
 	            	hostModeContainer.style.display ="none";
+	            
 	            }else{
 	            	// 사업자번호있으면 스위치 보이기 
 	            	hostModeContainer.style.display ="block";
